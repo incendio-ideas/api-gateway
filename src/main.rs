@@ -4,7 +4,6 @@ use async_graphql::{
 };
 use async_graphql_rocket::{GraphQLRequest, GraphQLResponse};
 use auth::auth_client::AuthClient;
-use rocket;
 
 use async_graphql::Object;
 use tonic::transport::Channel;
