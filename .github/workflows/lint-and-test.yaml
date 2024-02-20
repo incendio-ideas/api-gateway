@@ -1,0 +1,55 @@
+name: Lint and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: 1.76.0
+          components: rustfmt clippy
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint
+        run: cargo fmt --all -- --check && cargo clippy --all-targets --all-features -- -D warnings
+
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: 1.76.0
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check
+        run: cargo check --all-targets --all-features
