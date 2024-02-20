@@ -41,7 +41,7 @@ async fn graphql(
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let grpc_client = AuthClient::connect("http://auth:50051").await?;
+    let grpc_client = AuthClient::connect("http://10.0.95.37:50051").await?;
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription).finish();
 
     let _ = rocket::build()
