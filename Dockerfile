@@ -14,6 +14,6 @@ RUN cargo build --release
 FROM debian:buster-slim as runner
 
 COPY --from=builder /usr/src/app/target/release/api-gateway /usr/local/bin/api-gateway
-EXPOSE 8080
+EXPOSE 8000
 
 CMD ["api-gateway"]
