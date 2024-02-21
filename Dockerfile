@@ -4,7 +4,6 @@ WORKDIR /usr/src/app
 RUN apt-get update && apt-get install -y protobuf-compiler libprotobuf-dev
 
 COPY ./Cargo.toml ./Cargo.toml
-COPY ./Rocket.toml ./Rocket.toml
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./src ./src
 COPY ./build.rs ./build.rs
@@ -15,6 +14,7 @@ RUN cargo build --release
 FROM debian:buster-slim as runner
 
 COPY --from=builder /usr/src/app/target/release/api-gateway /usr/local/bin/api-gateway
+COPY ./Rocket.toml ./Rocket.toml
 EXPOSE 8000
 
 CMD ["api-gateway"]
