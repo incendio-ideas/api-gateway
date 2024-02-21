@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 RUN apt-get update && apt-get install -y protobuf-compiler libprotobuf-dev
 
 COPY ./Cargo.toml ./Cargo.toml
+COPY ./Rocket.toml ./Rocket.toml
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./src ./src
 COPY ./build.rs ./build.rs
