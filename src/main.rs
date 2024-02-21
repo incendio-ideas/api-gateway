@@ -2,6 +2,7 @@ use async_graphql::{
     http::{playground_source, GraphQLPlaygroundConfig},
     Context, EmptyMutation, EmptySubscription, Schema,
 };
+
 use async_graphql_rocket::{GraphQLRequest, GraphQLResponse};
 use auth::auth_client::AuthClient;
 
@@ -29,7 +30,7 @@ impl QueryRoot {
 
 type SchemaType = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
 
-#[rocket::get("/graphiql")]
+#[rocket::get("/playground")]
 fn graphql_playground() -> rocket::response::content::RawHtml<String> {
     rocket::response::content::RawHtml(playground_source(GraphQLPlaygroundConfig::new(
         "/v0/graphql",
@@ -53,8 +54,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let _ = rocket::build()
         .manage(schema)
-        .mount("/", rocket::routes![graphql_playground])
-        .mount("/v0", rocket::routes![graphql])
+        .mount("/v0", rocket::routes![graphql, graphql_playground])
         .launch()
         .await;
 
