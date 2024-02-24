@@ -44,12 +44,7 @@ async fn graphql(schema: &rocket::State<SchemaType>, request: GraphQLRequest) ->
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let auth_service_ip =
-        std::env::var("AUTH_SERVICE_SERVICE_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
-
-    println!("auth_service_ip: {}", auth_service_ip);
-
-    let grpc_client = AuthClient::connect(format!("http://{}:50051", auth_service_ip)).await?;
+    let grpc_client = AuthClient::connect("http://auth.incendio.svc.cluster.local:50051").await?;
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
         .data(grpc_client)
         .finish();
