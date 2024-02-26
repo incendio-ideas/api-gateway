@@ -26,6 +26,16 @@ impl QueryRoot {
 
         response.token
     }
+
+    async fn register(&self, ctx: &Context<'_>) -> String {
+        let mut grpc_client: AuthClient<Channel> =
+            ctx.data::<AuthClient<Channel>>().unwrap().clone();
+
+        let request = tonic::Request::new(auth::RegisterRequest::default());
+        let response = grpc_client.register(request).await.unwrap().into_inner();
+
+        response.token
+    }
 }
 
 type SchemaType = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
@@ -44,7 +54,11 @@ async fn graphql(schema: &rocket::State<SchemaType>, request: GraphQLRequest) ->
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let grpc_client = AuthClient::connect("http://auth.incendio.svc.cluster.local:50051").await?;
+    let auth_grpc_uri = std::env::var("AUTH_GRPC_URI").unwrap_or_else(|_| {
+        "http://0.0.0.0:50051".to_string()
+    });
+
+    let grpc_client = AuthClient::connect(auth_grpc_uri).await?;
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
         .data(grpc_client)
         .finish();
